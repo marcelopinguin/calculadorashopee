@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculadora Shopee</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
+body{background:linear-gradient(135deg,#0047FF,#1b6cff);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.container{width:980px;max-width:100%;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.top{background:#ff7b00;color:#fff;text-align:center;padding:18px;font-size:30px;font-weight:bold}
+.content{display:flex}
+.left{width:45%;padding:40px;background:#0d47ff;color:#fff}
+.right{width:55%;padding:30px}
+label{display:block;font-weight:bold;margin-top:18px}
+input{width:100%;padding:14px;margin-top:8px;border:none;border-radius:10px;font-size:18px}
+.card{background:#f5f7ff;border-left:6px solid royalblue;border-radius:10px;padding:15px;margin-bottom:18px}
+.card h3{color:#0d47ff;margin-bottom:12px}
+.sugestao{background:#fff3e6;border-left:6px solid #ff7b00;padding:10px;border-radius:8px;margin-top:10px}
+.valor{font-size:22px;font-weight:bold;color:#ff6600}
+.obs{font-size:11px;color:#666;font-style:italic;margin-top:6px;line-height:1.4}
+hr{border:none;border-top:1px solid #ddd;margin:12px 0}
+@media(max-width:800px){.content{flex-direction:column}.left,.right{width:100%}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="top">🛒 Calculadora Shopee</div>
+<div class="content">
+<div class="left">
+<label>Custo do Produto</label>
+<input id="custo" type="number" oninput="calcular()">
+<label>Valor de Venda</label>
+<input id="venda" type="number" oninput="calcular()">
+</div>
+<div class="right"><div id="resultado" style="padding-top:80px;text-align:center;color:#777">Preencha o custo do produto.</div></div>
+</div></div>
+<script>
+const custoEl=document.getElementById('custo'), vendaEl=document.getElementById('venda'), resultado=document.getElementById('resultado');
+const moeda=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function blocoSugestao(lbl,lucro,preco){
+return `<div class="sugestao">
+Lucro líquido de <b>R$ ${lucro},00</b>
+<div class="valor">${moeda(preco)}</div>
+<div class="obs">*Custo (${moeda(parseFloat(custoEl.value)||0)}) + Taxa Fixa Shopee (R$ 4,00) + Comissão Shopee (20%) + Imposto (10%) + Lucro (${moeda(lucro)}) = Preço Sugerido*</div>
+</div>`;
+}
+function calcular(){
+let c=parseFloat(custoEl.value)||0;
+if(c<=0){resultado.innerHTML='<div style="padding-top:80px;color:#777">Preencha o custo do produto.</div>';return;}
+let p3=(c+4+3)/0.70,p5=(c+4+5)/0.70,p7=(c+4+7)/0.70;
+let html=`<div class="card"><h3>Preços Sugeridos</h3>
+${blocoSugestao("3",3,p3)}
+${blocoSugestao("5",5,p5)}
+${blocoSugestao("7",7,p7)}
+</div>`;
+if(vendaEl.value!==""){
+let v=parseFloat(vendaEl.value),f=4,s=v*.2,i=v*.1,l=v-c-f-s-i;
+html+=`<div class="card"><h3>Resultado da Venda</h3>
+Custo: <b>${moeda(c)}</b><hr>
+Venda: <b>${moeda(v)}</b><hr>
+Taxa fixa: <b>${moeda(f)}</b><hr>
+Taxa Shopee (20%): <b>${moeda(s)}</b><hr>
+Imposto (10%): <b>${moeda(i)}</b><hr>
+Lucro Líquido:<br><span class="valor">${moeda(l)}</span>
+</div>`;
+}
+resultado.innerHTML=html;
+}
+</script>
+</body>
+</html>
