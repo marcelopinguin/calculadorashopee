@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculadora Shopee</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
+body{background:linear-gradient(135deg,#0047ff,#2b7bff);padding:20px}
+.container{max-width:1100px;margin:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.top{background:#ff7b00;color:#fff;text-align:center;padding:18px;font-size:30px;font-weight:bold}
+.content{display:flex}
+.left{width:45%;background:#1348ff;color:#fff;padding:28px}
+.right{width:55%;padding:28px}
+label{display:block;margin-top:16px;font-weight:bold}
+.money{position:relative}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#666;font-weight:bold}
+.money input{padding-left:45px}
+input,select{width:100%;padding:12px;border:none;border-radius:8px;margin-top:6px;font-size:16px}
+.sug{background:#fff3e6;border-left:5px solid #ff7b00;border-radius:8px;padding:10px;margin-top:10px;color:#111;cursor:pointer;transition:.2s}
+.sug:hover{transform:scale(1.02);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.valor{font-size:22px;color:#ff6600;font-weight:bold}
+.small{font-size:11px;color:#666;margin-top:4px}
+.card{background:#f5f7ff;border-left:6px solid royalblue;border-radius:10px;padding:15px}
+.ok{font-size:38px;color:#11a63d;font-weight:bold}
+hr{border:none;border-top:1px solid #ddd;margin:10px 0}
+@media(max-width:700px){.content{flex-direction:column}.left,.right{width:100%}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="top">🛒 Calculadora Shopee</div>
+<div class="content">
+<div class="left">
+<label>Custo do Produto</label>
+<div class="money"><span>R$</span><input id="custo" type="text" inputmode="numeric"></div>
+
+<label>Valor de Venda</label>
+<div class="money"><span>R$</span><input id="venda" type="text" inputmode="numeric"></div>
+
+<label>Porcentagem de Imposto</label>
+<select id="imp">
+<option value="0" selected>0%</option>
+<option value="4">4%</option>
+<option value="7.3">7,3%</option>
+<option value="9.5">9,5%</option>
+<option value="10.7">10,7%</option>
+<option value="14.3">14,3%</option>
+<option value="19">19%</option>
+</select>
+<div id="sugestoes"></div>
+</div>
+
+<div class="right">
+<div id="resultado" style="text-align:center;padding-top:80px;color:#777">Preencha o custo do produto.</div>
+</div>
+</div>
+</div>
+
+<script>
+const fmt=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const moneyValue=e=>parseFloat((e.value||'0').replace(/\./g,'').replace(',','.'))||0;
+function mask(e){
+ let n=e.value.replace(/\D/g,'');
+ if(!n){e.value='';calc();return;}
+ e.value=(parseInt(n)/100).toFixed(2).replace('.',',');
+ calc();
+}
+custo.oninput=()=>mask(custo);
+venda.oninput=()=>mask(venda);
+imp.onchange=calc;
+
+function preencher(v){
+ venda.value=v.toFixed(2).replace('.',',');
+ calc();
+ venda.focus();
+}
+
+function calc(){
+ let c=moneyValue(custo);
+ if(c<=0){
+   sugestoes.innerHTML='';
+   resultado.innerHTML='Preencha o custo do produto.';
+   return;
+ }
+ let ip=parseFloat(imp.value)/100;
+ let fator=1-(0.20+ip);
+
+ function bloco(l){
+   let p=(c+4+l)/fator;
+   let tx=p*0.20;
+   let im=p*ip;
+   return `<div class="sug" onclick="preencher(${p.toFixed(2)})">
+   <b>Lucro ${fmt(l)}</b>
+   <div class="valor">${fmt(p)}</div>
+   <div class="small">Clique para usar este valor</div>
+   </div>`;
+ }
+
+ sugestoes.innerHTML='<h3 style="margin:18px 0 10px;color:#fff">Preços Sugeridos</h3>'+bloco(3)+bloco(5)+bloco(7);
+
+ let v=moneyValue(venda);
+ if(v<=0){
+   resultado.innerHTML="Informe o valor de venda para visualizar o resultado.";
+   return;
+ }
+
+ let fixa=4;
+ let sh=v*0.20;
+ let imposto=v*ip;
+ let liquido=v-fixa-sh-imposto;
+ let lucro=liquido-c;
+ // Margem de lucro = lucro líquido dividido pelo preço de venda
+ let margem=(lucro/v)*100;
+
+ resultado.innerHTML=`
+ <div class="card">
+ <h3>Resultado da Venda</h3>
+ 📦 Custo: <b>${fmt(c)}</b><hr>
+ 💵 Venda: <b>${fmt(v)}</b><hr>
+ 🏪 Taxa fixa: <b>${fmt(fixa)}</b><hr>
+ 🏪 Comissão Shopee: <b>${fmt(sh)}</b><hr>
+ 🏛 Imposto (${imp.value}%): <b>${fmt(imposto)}</b><hr>
+ 💰 Lucro Líquido<br><span class="ok">${fmt(lucro)}</span>
+ <hr>
+ Porcentagem de Lucro<br><small>(Lucro ÷ Valor de Venda)</small><br><br><div class="ok">${margem.toFixed(2)}%</div>
+ </div>`;
+}
+</script>
+</body>
+</html>
