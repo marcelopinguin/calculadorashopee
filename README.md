@@ -1,2 +1,0 @@
-# calculadorashopee
-Calculadora Shopee
