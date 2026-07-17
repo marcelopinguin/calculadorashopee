@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="pt-br"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="pt-br">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Calculadora Shopee</title>
 <style>
 body{font-family:Segoe UI,Arial,sans-serif;background:#0d5bff;margin:0;padding:20px}
@@ -15,12 +16,19 @@ input,select{width:100%;padding:11px;border:none;border-radius:8px;margin-top:6p
 .card{background:#f4f7ff;border-left:5px solid royalblue;border-radius:10px;padding:15px}
 .ok{font-size:34px;color:#149b38;font-weight:bold}
 @media(max-width:700px){.wrap{flex-direction:column}.l,.r{width:100%}}
-</style></head><body>
-<div class="box"><div class="top">🛒 Calculadora Shopee</div><div class="wrap">
+</style>
+</head>
+<body>
+<div class="box">
+<div class="top">🛒 Calculadora Shopee</div>
+<div class="wrap">
 <div class="l">
-<label>Custo Unitário</label><div class="money"><span>R$</span><input id="custo"></div>
-<label>Quantidade</label><input id="qtd" type="number" value="1" min="1">
-<label>Valor de Venda</label><div class="money"><span>R$</span><input id="venda"></div>
+<label>Custo Unitário</label>
+<div class="money"><span>R$</span><input id="custo"></div>
+<label>Quantidade</label>
+<input id="qtd" type="number" value="1" min="1">
+<label>Valor de Venda</label>
+<div class="money"><span>R$</span><input id="venda"></div>
 <label>Faixa de Faturamento</label>
 <select id="imp">
 <option value="0">0% - Isento / Sem imposto</option>
@@ -31,7 +39,8 @@ input,select{width:100%;padding:11px;border:none;border-radius:8px;margin-top:6p
 <option value="14.3">14,3% - De R$ 1,8 milhão a R$ 3,6 milhões/ano</option>
 <option value="19">19% - De R$ 3,6 milhões a R$ 4,8 milhões/ano</option>
 </select>
-<div id="sugs"></div></div>
+<div id="sugs"></div>
+</div>
 <div class="r"><div id="res" class="card">Preencha os campos.</div></div>
 </div></div>
 <script>
@@ -44,15 +53,26 @@ function fill(v){venda.value=v.toFixed(2).replace('.',',');upd();}
 function suggested(finalProfit){
  const c=val(custo)*(Math.max(1,parseInt(qtd.value)||1));
  const ip=parseFloat(imp.value)/100;
- return (c+EMB+FIXA+ADS+finalProfit)/(1-0.20-ip);
+ return (c+EMB+FIXA+ADS+finalProfit)/(1-0.20-ip); // ADS fixo incluído no cálculo
 }
-function card(l,r=false){let p=suggested(l);return `<div class="sug ${r?'rec':''}" onclick="fill(${p.toFixed(2)})"><div style="font-weight:bold;color:#000">${r?'⭐ ':''}Lucro ${fmt(l)}</div><div style="font-size:24px;color:#ff6a00;font-weight:bold">${fmt(p)}</div><small style="color:#000">Clique para usar este preço</small></div>`}
+function card(l,r=false){
+ const p=suggested(l);
+ return `<div class="sug ${r?'rec':''}" onclick="fill(${p.toFixed(2)})">
+ <div style="font-weight:bold;color:#000">${r?'⭐ ':''}Lucro ${fmt(l)}</div>
+ <div style="font-size:24px;color:#ff6a00;font-weight:bold">${fmt(p)}</div>
+ <small style="color:#000">Clique para usar este preço</small></div>`;
+}
 function upd(){
-let cu=val(custo),q=Math.max(1,parseInt(qtd.value)||1),v=val(venda);
-if(cu>0)sugs.innerHTML="<h3>Preços Sugeridos</h3>"+card(3)+card(5,true)+card(7);else sugs.innerHTML="";
-if(!cu||!v){res.innerHTML="Preencha os campos.";return;}
-let ct=cu*q,ip=parseFloat(imp.value)/100,com=v*.20,impv=v*ip,lucro=v-ct-EMB-FIXA-com-impv-ADS,margem=lucro/v*100;
-res.innerHTML=`<h3>Resultado</h3>
+ const cu=val(custo),q=Math.max(1,parseInt(qtd.value)||1),v=val(venda);
+ if(cu>0)sugs.innerHTML="<h3>Preços Sugeridos</h3>"+card(3)+card(5,true)+card(7);else sugs.innerHTML="";
+ if(!cu||!v){res.innerHTML="Preencha os campos.";return;}
+ const ct=cu*q,ip=parseFloat(imp.value)/100;
+ const com=v*0.20,impv=v*ip;
+ const receber=v-FIXA-com-impv;
+ const liquido=receber-EMB-ADS;
+ const lucro=v-ct-EMB-FIXA-com-impv-ADS;
+ const margem=lucro/v*100;
+ res.innerHTML=`<h3>Resultado</h3>
 📦 Custo (${q} un.): <b>${fmt(ct)}</b><hr>
 📦 Embalagem: <b>${fmt(EMB)}</b><hr>
 💵 Valor de Venda: <b>${fmt(v)}</b><hr>
@@ -60,7 +80,11 @@ res.innerHTML=`<h3>Resultado</h3>
 🏪 Comissão Shopee 20%: <b>${fmt(com)}</b><hr>
 🏛 Imposto ${imp.value}%: <b>${fmt(impv)}</b><hr>
 📢 Valor Aproximado de Ads: <b>${fmt(ADS)}</b><hr>
+💳 Valor a Receber da Shopee<br><div class="ok">${fmt(receber)}</div><hr>
+💰 Valor Líquido Descontando Embalagem e Ads<br><div class="ok">${fmt(liquido)}</div><hr>
 💵 Lucro Final<br><div class="ok">${fmt(lucro)}</div><hr>
 Porcentagem de Lucro<br><div class="ok">${margem.toFixed(2)}%</div>`;
 }
-</script></body></html>
+</script>
+</body>
+</html>
