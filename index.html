@@ -1,132 +1,66 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
+<html lang="pt-br"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Calculadora Shopee</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial}
-body{background:linear-gradient(135deg,#0047ff,#2b7bff);padding:20px}
-.container{max-width:1100px;margin:auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.top{background:#ff7b00;color:#fff;text-align:center;padding:18px;font-size:30px;font-weight:bold}
-.content{display:flex}
-.left{width:45%;background:#1348ff;color:#fff;padding:28px}
-.right{width:55%;padding:28px}
-label{display:block;margin-top:16px;font-weight:bold}
-.money{position:relative}
-.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#666;font-weight:bold}
-.money input{padding-left:45px}
-input,select{width:100%;padding:12px;border:none;border-radius:8px;margin-top:6px;font-size:16px}
-.sug{background:#fff3e6;border-left:5px solid #ff7b00;border-radius:8px;padding:10px;margin-top:10px;color:#111;cursor:pointer;transition:.2s}
-.sug:hover{transform:scale(1.02);box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.valor{font-size:22px;color:#ff6600;font-weight:bold}
-.small{font-size:11px;color:#666;margin-top:4px}
-.card{background:#f5f7ff;border-left:6px solid royalblue;border-radius:10px;padding:15px}
-.ok{font-size:38px;color:#11a63d;font-weight:bold}
-hr{border:none;border-top:1px solid #ddd;margin:10px 0}
-@media(max-width:700px){.content{flex-direction:column}.left,.right{width:100%}}
-</style>
-</head>
-<body>
-<div class="container">
-<div class="top">🛒 Calculadora Shopee</div>
-<div class="content">
-<div class="left">
-<label>Custo do Produto</label>
-<div class="money"><span>R$</span><input id="custo" type="text" inputmode="numeric"></div>
-
-<label>Valor de Venda</label>
-<div class="money"><span>R$</span><input id="venda" type="text" inputmode="numeric"></div>
-
-<label>Faixa de Faturamento (Últimos 12 meses)</label>
+body{font-family:Segoe UI,Arial,sans-serif;background:#0d5bff;margin:0;padding:20px}
+.box{max-width:1100px;margin:auto;background:#fff;border-radius:16px;overflow:hidden}
+.top{background:#ff7b00;color:#fff;padding:18px;text-align:center;font-size:30px;font-weight:bold}
+.wrap{display:flex}.l{width:45%;background:#1748ff;color:#fff;padding:24px;box-sizing:border-box}.r{width:55%;padding:24px;box-sizing:border-box}
+label{display:block;margin-top:14px;font-weight:bold}
+.money{position:relative}.money span{position:absolute;left:10px;top:17px;color:#666}.money input{padding-left:35px}
+input,select{width:100%;padding:11px;border:none;border-radius:8px;margin-top:6px;box-sizing:border-box}
+.sug{background:#fff3e6;border-left:5px solid #ff7b00;border-radius:8px;padding:10px;margin-top:10px;cursor:pointer}
+.sug.rec{border-left-color:#16a34a;background:#eefcf2}
+.card{background:#f4f7ff;border-left:5px solid royalblue;border-radius:10px;padding:15px}
+.ok{font-size:34px;color:#149b38;font-weight:bold}
+@media(max-width:700px){.wrap{flex-direction:column}.l,.r{width:100%}}
+</style></head><body>
+<div class="box"><div class="top">🛒 Calculadora Shopee</div><div class="wrap">
+<div class="l">
+<label>Custo Unitário</label><div class="money"><span>R$</span><input id="custo"></div>
+<label>Quantidade</label><input id="qtd" type="number" value="1" min="1">
+<label>Valor de Venda</label><div class="money"><span>R$</span><input id="venda"></div>
+<label>Faixa de Faturamento</label>
 <select id="imp">
-<option value="0" selected>Isento / Sem imposto</option>
-<option value="4">Até R$ 180 mil/ano (4%)</option>
-<option value="7.3">De R$ 180 mil a R$ 360 mil/ano (7,3%)</option>
-<option value="9.5">De R$ 360 mil a R$ 720 mil/ano (9,5%)</option>
-<option value="10.7">De R$ 720 mil a R$ 1,8 milhão/ano (10,7%)</option>
-<option value="14.3">14,3%</option>
-<option value="19">De R$ 1,8 milhão a R$ 3,6 milhões/ano (14,3%)</option>
-<option value="19">De R$ 3,6 milhões a R$ 4,8 milhões/ano (19%)</option>
+<option value="0">0% - Isento / Sem imposto</option>
+<option value="4">4% - Até R$ 180 mil/ano</option>
+<option value="7.3">7,3% - De R$ 180 mil a R$ 360 mil/ano</option>
+<option value="9.5">9,5% - De R$ 360 mil a R$ 720 mil/ano</option>
+<option value="10.7">10,7% - De R$ 720 mil a R$ 1,8 milhão/ano</option>
+<option value="14.3">14,3% - De R$ 1,8 milhão a R$ 3,6 milhões/ano</option>
+<option value="19">19% - De R$ 3,6 milhões a R$ 4,8 milhões/ano</option>
 </select>
-<div id="sugestoes"></div>
-</div>
-
-<div class="right">
-<div id="resultado" style="text-align:center;padding-top:80px;color:#777">Preencha o custo do produto.</div>
-</div>
-</div>
-</div>
-
+<div id="sugs"></div></div>
+<div class="r"><div id="res" class="card">Preencha os campos.</div></div>
+</div></div>
 <script>
+const EMB=.25,FIXA=4,ADS=1;
 const fmt=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const moneyValue=e=>parseFloat((e.value||'0').replace(/\./g,'').replace(',','.'))||0;
-function mask(e){
- let n=e.value.replace(/\D/g,'');
- if(!n){e.value='';calc();return;}
- e.value=(parseInt(n)/100).toFixed(2).replace('.',',');
- calc();
+function msk(e){let n=e.value.replace(/\D/g,'');if(!n){e.value='';upd();return;}e.value=(parseInt(n)/100).toFixed(2).replace('.',',');upd();}
+function val(e){return parseFloat((e.value||'0').replace(/\./g,'').replace(',','.'))||0;}
+custo.oninput=()=>msk(custo);venda.oninput=()=>msk(venda);qtd.oninput=upd;imp.onchange=upd;
+function fill(v){venda.value=v.toFixed(2).replace('.',',');upd();}
+function suggested(finalProfit){
+ const c=val(custo)*(Math.max(1,parseInt(qtd.value)||1));
+ const ip=parseFloat(imp.value)/100;
+ return (c+EMB+FIXA+ADS+finalProfit)/(1-0.20-ip);
 }
-custo.oninput=()=>mask(custo);
-venda.oninput=()=>mask(venda);
-imp.onchange=calc;
-
-function preencher(v){
- venda.value=v.toFixed(2).replace('.',',');
- calc();
- venda.focus();
+function card(l,r=false){let p=suggested(l);return `<div class="sug ${r?'rec':''}" onclick="fill(${p.toFixed(2)})"><div style="font-weight:bold;color:#000">${r?'⭐ ':''}Lucro ${fmt(l)}</div><div style="font-size:24px;color:#ff6a00;font-weight:bold">${fmt(p)}</div><small style="color:#000">Clique para usar este preço</small></div>`}
+function upd(){
+let cu=val(custo),q=Math.max(1,parseInt(qtd.value)||1),v=val(venda);
+if(cu>0)sugs.innerHTML="<h3>Preços Sugeridos</h3>"+card(3)+card(5,true)+card(7);else sugs.innerHTML="";
+if(!cu||!v){res.innerHTML="Preencha os campos.";return;}
+let ct=cu*q,ip=parseFloat(imp.value)/100,com=v*.20,impv=v*ip,lucro=v-ct-EMB-FIXA-com-impv-ADS,margem=lucro/v*100;
+res.innerHTML=`<h3>Resultado</h3>
+📦 Custo (${q} un.): <b>${fmt(ct)}</b><hr>
+📦 Embalagem: <b>${fmt(EMB)}</b><hr>
+💵 Valor de Venda: <b>${fmt(v)}</b><hr>
+🏪 Taxa fixa Shopee: <b>${fmt(FIXA)}</b><hr>
+🏪 Comissão Shopee 20%: <b>${fmt(com)}</b><hr>
+🏛 Imposto ${imp.value}%: <b>${fmt(impv)}</b><hr>
+📢 Valor Aproximado de Ads: <b>${fmt(ADS)}</b><hr>
+💵 Lucro Final<br><div class="ok">${fmt(lucro)}</div><hr>
+Porcentagem de Lucro<br><div class="ok">${margem.toFixed(2)}%</div>`;
 }
-
-function calc(){
- let c=moneyValue(custo);
- if(c<=0){
-   sugestoes.innerHTML='';
-   resultado.innerHTML='Preencha o custo do produto.';
-   return;
- }
- let ip=parseFloat(imp.value)/100;
- let fator=1-(0.20+ip);
-
- function bloco(l){
-   let p=(c+4+l)/fator;
-   let tx=p*0.20;
-   let im=p*ip;
-   return `<div class="sug" onclick="preencher(${p.toFixed(2)})">
-   <b>Lucro ${fmt(l)}</b>
-   <div class="valor">${fmt(p)}</div>
-   <div class="small">Clique para usar este valor</div>
-   </div>`;
- }
-
- sugestoes.innerHTML='<h3 style="margin:18px 0 10px;color:#fff">Preços Sugeridos</h3>'+bloco(3)+bloco(5)+bloco(7);
-
- let v=moneyValue(venda);
- if(v<=0){
-   resultado.innerHTML="Informe o valor de venda para visualizar o resultado.";
-   return;
- }
-
- let fixa=4;
- let sh=v*0.20;
- let imposto=v*ip;
- let liquido=v-fixa-sh-imposto;
- let lucro=liquido-c;
- // Margem de lucro = lucro líquido dividido pelo preço de venda
- let margem=(lucro/v)*100;
-
- resultado.innerHTML=`
- <div class="card">
- <h3>Resultado da Venda</h3>
- 📦 Custo: <b>${fmt(c)}</b><hr>
- 💵 Venda: <b>${fmt(v)}</b><hr>
- 🏪 Taxa fixa: <b>${fmt(fixa)}</b><hr>
- 🏪 Comissão Shopee: <b>${fmt(sh)}</b><hr>
- 🏛 Imposto (${imp.value}%): <b>${fmt(imposto)}</b><hr>
- 💰 Lucro Líquido<br><span class="ok">${fmt(lucro)}</span>
- <hr>
- Porcentagem de Lucro<br><small>(Lucro ÷ Valor de Venda)</small><br><br><div class="ok">${margem.toFixed(2)}%</div>
- </div>`;
-}
-</script>
-</body>
-</html>
+</script></body></html>
